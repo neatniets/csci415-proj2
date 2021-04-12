@@ -1,8 +1,12 @@
 #ifndef RAINBOW_HPP
 #define RAINBOW_HPP
 
+#include <stddef.h>
+
 /** Set of characters allowed in user passwords. */
 extern const char charset[];
+/** Number of characters in the character set. */
+extern const size_t charset_len;
 
 typedef unsigned char uchar_t;
 
