@@ -6,7 +6,7 @@
 CC=g++
 CFLAGS=-g -std=c++11
 
-SRC=
+SRC=rainbow.cpp
 OBJS=$(SRC:.cpp=.o)
 
 all:
@@ -16,5 +16,7 @@ clean:
 
 .cpp.o:
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+rainbow.cpp: rainbow.hpp
 
 .PHONY: all clean
