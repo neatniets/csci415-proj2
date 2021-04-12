@@ -2,8 +2,7 @@
 #define RAINBOW_HPP
 
 /** Set of characters allowed in user passwords. */
-static const char charset[]
-	= "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+extern const char charset[];
 
 typedef unsigned char uchar_t;
 
