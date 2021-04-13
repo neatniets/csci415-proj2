@@ -2,6 +2,7 @@
 #include <string.h>
 #include <limits.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include <crypt.h> // TODO: remove this after anuska implements md5 crypt
 
@@ -47,17 +48,28 @@ hash(
 	const char *passwd
 ) {
 	/* use md5 crypt library routine */
-	const char *setting = crypt_gensalt("$1$", 1000, salt, strlen(salt));
+	const char prefix[] = "$1$";
+	const size_t slen = strlen(prefix) + strlen(salt) + 1;
+	char *setting = (char *)malloc((slen + 1) * sizeof(*setting));
+	memcpy(setting, prefix, strlen(prefix) + 1);
+	strcat(setting, salt);
+	setting[slen - 1] = '$';
+	setting[slen] = '\0';
+
 	const char *enc_hash = crypt(passwd, setting);
 
 	/* encoded hash has the 'setting' string at its start, with the hash
-	 * following */
-	const char *hash = enc_hash + strlen(setting);
-	size_t hlen = strlen(hash);
+	 * following after a separator */
+	const char *hash = enc_hash + strlen(setting) + 1;
 
 	/* hash is not dynamically allocated & needs to be copied */
-	char *hashcpy = (char *)malloc((hlen + 1) * sizeof(*hashcpy));
-	memcpy(hashcpy, hash, hlen + 1);
+	char *hashcpy = (char *)malloc((HASH_LEN + 1) * sizeof(*hashcpy));
+	memcpy(hashcpy, hash, HASH_LEN);
+	hashcpy[HASH_LEN] = '\0';
+
+	/* free setting */
+	free(setting);
+
 	return hashcpy;
 }
 
