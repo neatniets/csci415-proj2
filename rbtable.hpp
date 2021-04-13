@@ -15,11 +15,13 @@
  * and the offset is the file offset of the startpoint password in the
  * dictionary file.
  * The rainbow table will be sorted first on the salt, then on the endpoint.
+ * @pre		hash chain length must be >0
  * @return	0 on success */
 int
 build_rbtable(
 	const char *dfile, //!<[in] filename of password dictionary
 	const char *tfile, //!<[in] optional filename of rainbow table
+	int chainlen, //!<[in] length of hash chains
 	size_t salt_max //!<[in] maximum salt value to create table for
 );
 
