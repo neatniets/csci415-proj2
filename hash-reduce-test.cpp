@@ -40,5 +40,20 @@ main(
 		free(pdet[i]);
 	}
 
+	puts("\ncomparing different reduction key values");
+	char *hash1 = hash(salt, passwd);
+	printf("hash = %s\n", hash1);
+	char *pass;
+	for (int i = 0; i <= 10; i++) {
+		puts("reducing");
+		pass = reduce(i, hash1);
+		printf("%d: %s\n", i, pass);
+		puts("freeing pass");
+		free(pass);
+	}
+
+	puts("freeing hash");
+	free_hash(hash1);
+
 	return 0;
 }
