@@ -1,0 +1,13 @@
+Class: CSCI415
+Project: 2
+Title: UNIX Password Implementation and Rainbow Table Attack
+
+Group members:
+Cameron Nieters,
+Connor Cloutier,
+Anuska Shrestha,
+Abhishek Adhikari
+
+Dependencies: libcrypt
+
+To compile: `make`
