@@ -42,9 +42,24 @@ hash_chain(
 	salt_t salt,
 	const char *passwd
 ) {
-	/* TODO: finish this */
-	fputs("error: hash_chain not implemented\n", stderr);
-	exit(1);
+	/* init vals */
+	char *h = hash(salt, passwd);
+	char *p = reduce(0, h);
+	free_hash(h);
+	h = NULL;
+
+	/* produce hash chain */
+	for (int i = 1; i <= len; i++) {
+		/* hash password */
+		h = hash(salt, p);
+		free(p);
+		/* reduce hash */
+		p = reduce(i, h);
+		free_hash(h);
+	}
+
+	/* return endpoint */
+	return p;
 }
 
 /* TODO: replace this with anuska's md5 crypt implementation */

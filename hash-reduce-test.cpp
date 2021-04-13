@@ -70,7 +70,16 @@ main(
 		printf("pass = %s\n", p);
 		free_hash(h);
 	}
+
+	puts("\ntesting hash chain method");
+	char *p2 = hash_chain(10, salt, passwd);
+	printf("pass1 = %s\n"
+		"pass2 = %s\n",
+		p, p2);
+	assert(strcmp(p, p2) == 0);
+	puts("passes are equal.");
 	free(p);
+	free(p2);
 
 	return 0;
 }
