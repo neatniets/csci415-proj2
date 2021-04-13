@@ -100,12 +100,12 @@ reduce(
 
 		/* apply hash char to those indices */
 		for (int j = 0; j < ninds; j++) {
-			rpass[j] ^= hash[i];
+			rpass[inds[j]] ^= hash[i];
 		}
 	}
 	for (size_t i = 0; i < rlen; i++) {
 		/* turn bytes into printable pass chars */
-		rpass[i] = (unsigned)rpass[i] % charset_len;
+		rpass[i] = charset[(unsigned)rpass[i] % charset_len];
 	}
 
 	return rpass;
