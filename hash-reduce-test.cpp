@@ -10,7 +10,7 @@ main(
 	int argc,
 	char **argv
 ) {
-	const char salt[] = "as";
+	const salt_t salt = 123;
 	const char passwd[] = "gamer";
 
 	puts("test if hashing is deterministic");

@@ -15,25 +15,27 @@
 /** The known length of a hash. */
 #define HASH_LEN	(128 / CHAR_BIT)
 static_assert(PASS_MAX <= HASH_LEN, "PASS_MAX must be <= HASH_LEN");
+/** The length of the string a salt is converted into. */
+#define SALT_CH_LEN	8
+/** Mask for a single byte. */
+#define BYTE_MASK	0xFF
 
 /* definitions of header declarations */
 const char charset[]
 	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456790";
 const size_t charset_len = sizeof(charset) / sizeof(*charset);
 
-/** Salt a password.
- * @post	returned string must be freed
- * @return	salted password string */
-static char *
-add_salt(
-	const char *salt, //!<[in] salt string
-	const char *passwd //!<[in] password string
+/** Turn a salt into a string to be used in hashing. */
+static void
+salt2str(
+	char saltstr[SALT_CH_LEN + 1], //!<[out] salt string
+	salt_t salt //!<[in] numeric salt
 );
 
 char *
 hash_chain(
 	uchar_t len,
-	const char *salt,
+	salt_t salt,
 	const char *passwd
 ) {
 	/* TODO: finish this */
@@ -44,15 +46,18 @@ hash_chain(
 /* TODO: replace this with anuska's md5 crypt implementation */
 char *
 hash(
-	const char *salt,
+	salt_t salt,
 	const char *passwd
 ) {
+	char ssalt[SALT_CH_LEN + 1];
+	salt2str(ssalt, salt);
+
 	/* use md5 crypt library routine */
 	const char prefix[] = "$1$";
-	const size_t slen = strlen(prefix) + strlen(salt) + 1;
+	const size_t slen = strlen(prefix) + strlen(ssalt) + 1;
 	char *setting = (char *)malloc((slen + 1) * sizeof(*setting));
 	memcpy(setting, prefix, strlen(prefix) + 1);
-	strcat(setting, salt);
+	strcat(setting, ssalt);
 	setting[slen - 1] = '$';
 	setting[slen] = '\0';
 
@@ -111,21 +116,14 @@ reduce(
 	return rpass;
 }
 
-static char *
-add_salt(
-	const char *salt,
-	const char *passwd
+static void
+salt2str(
+	char saltstr[SALT_CH_LEN + 1],
+	salt_t salt
 ) {
-	/* get lengths */
-	size_t slen = strlen(salt);
-	size_t plen = strlen(passwd);
-	size_t len = slen + plen;
-	/* allocate string */
-	char *spass = (char *)malloc((len + 1) * sizeof(*spass));
-
-	/* salt password via concatenation */
-	memcpy(spass, salt, slen);
-	memcpy(spass + slen, passwd, plen);
-	spass[len] = '\0';
-	return spass;
+	for (int i = 0; i < SALT_CH_LEN; i++) {
+		saltstr[i] = salt & BYTE_MASK;
+		salt >>= CHAR_BIT;
+	}
+	saltstr[SALT_CH_LEN] = '\0';
 }

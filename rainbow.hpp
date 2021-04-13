@@ -9,6 +9,7 @@ extern const char charset[];
 extern const size_t charset_len;
 
 typedef unsigned char uchar_t;
+typedef long long salt_t;
 
 /** Precompute a hash chain, obtaining the endpoint password.
  * @post	returned password should be freed
@@ -16,7 +17,7 @@ typedef unsigned char uchar_t;
 char *
 hash_chain(
 	uchar_t len, //!<[in] hash chain length
-	const char *salt, //!<[in] salt string
+	salt_t salt, //!<[in] salt string
 	const char *passwd //!<[in] startpoint password string
 );
 
@@ -25,7 +26,7 @@ hash_chain(
  * @return      hash string */
 char *
 hash(
-	const char *salt, //!<[in] salt string
+	salt_t salt, //!<[in] salt string
 	const char *passwd //!<[in] password string
 );
 
