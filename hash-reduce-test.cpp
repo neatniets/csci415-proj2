@@ -55,5 +55,22 @@ main(
 	puts("freeing hash");
 	free_hash(hash1);
 
+	puts("\ncomparing hash chain");
+	char *h = hash(salt, passwd);
+	printf("hash = %s\n", h);
+	char *p = reduce(0, h);
+	printf("pass = %s\n", p);
+	free_hash(h);
+	h = NULL;
+	for (uchar_t i = 1; i <= 10; i++) {
+		h = hash(salt, p);
+		printf("hash = %s\n", h);
+		free(p);
+		p = reduce(i, h);
+		printf("pass = %s\n", p);
+		free_hash(h);
+	}
+	free(p);
+
 	return 0;
 }
