@@ -12,6 +12,10 @@
  * Useful as a modulus for the length of passwords reduced from a hash.
  * IT IS ASSUMED TO BE <= THE LENGTH OF THE HASH. */
 #define PASS_MAX	13
+/** The "minimum" number of characters a password would likely be.
+ * Must be < maximum. */
+#define PASS_MIN	5
+static_assert(PASS_MIN < PASS_MAX, "PASS_MIN must be < PASS_MAX");
 /** The known length of a hash. */
 #define HASH_LEN	(128 / CHAR_BIT)
 static_assert(PASS_MAX <= HASH_LEN, "PASS_MAX must be <= HASH_LEN");
@@ -22,8 +26,8 @@ static_assert(PASS_MAX <= HASH_LEN, "PASS_MAX must be <= HASH_LEN");
 
 /* definitions of header declarations */
 const char charset[]
-	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456790";
-const size_t charset_len = sizeof(charset) / sizeof(*charset);
+	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+const size_t charset_len = sizeof(charset) / sizeof(*charset) - 1;
 
 /** Turn a salt into a string to be used in hashing. */
 static void
@@ -89,7 +93,8 @@ reduce(
 	const char *hash
 ) {
 	/* obtain a reduction pass length */
-	size_t rlen = (hash[key % HASH_LEN] % PASS_MAX) + 1;
+	size_t rlen = (hash[key % HASH_LEN] % (PASS_MAX + 1 - PASS_MIN))
+		+ PASS_MIN;
 	/* allocate rpass */
 	char *rpass = (char *)malloc((rlen + 1) * sizeof(*rpass));
 	memset(rpass, '\0', rlen + 1);
