@@ -3,6 +3,8 @@
 #include <limits.h>
 #include <stdio.h>
 #include <errno.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #include <crypt.h> // TODO: remove this after anuska implements md5 crypt
 
@@ -141,9 +143,50 @@ salt2str(
 	char saltstr[SALT_CH_LEN + 1],
 	salt_t salt
 ) {
-	for (int i = 0; i < SALT_CH_LEN; i++) {
-		saltstr[i] = salt & BYTE_MASK;
-		salt >>= CHAR_BIT;
+	/* salt has to be in base64 notation, so using the base64 command */
+
+	/* generate pipes to talk to child */
+	int pipes2ch[2]; // parent -> child
+	int pipes2p[2]; // child -> parent
+	pipe(pipes2ch);
+	pipe(pipes2p);
+
+	/* create child */
+	pid_t pid = fork();
+	if (pid == 0) { // child
+		/* close unused pipes */
+		close(pipes2ch[1]);
+		close(pipes2p[0]);
+		/* set stdin to come from pipe */
+		dup2(pipes2ch[0], fileno(stdin));
+		/* set stdout to go to pipe */
+		dup2(pipes2p[1], fileno(stdout));
+		/* exec base64 */
+		const char cmd[] = "base64";
+		execlp(cmd, cmd, "-", NULL);
+		/* shouldn't be here */
+		fputs("failed to exec base64\n", stderr);
+		exit(1);
+	} else if (pid > 0) { // parent
+		/* close unused pipes */
+		close(pipes2ch[0]);
+		close(pipes2p[1]);
+		/* send salt to be encoded */
+		write(pipes2ch[1], &salt, sizeof(salt));
+		/* kill pipe to signal end of transmission */
+		close(pipes2ch[1]);
+		/* wait for child to die */
+		int status;
+		wait(&status);
+		if (status != 0) { // child failed
+			exit(1);
+		} else { // child success
+			read(pipes2p[0], saltstr, SALT_CH_LEN);
+			close(pipes2p[0]);
+			saltstr[SALT_CH_LEN] = '\0';
+		}
+	} else { // error
+		fputs("failed to generate child for base64\n", stderr);
+		exit(1);
 	}
-	saltstr[SALT_CH_LEN] = '\0';
 }
