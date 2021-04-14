@@ -147,8 +147,13 @@ sort_table(const char *tfile) {
 	pid_t pid = fork();
 	if (pid == 0) { // child
 		const char cmd[] = "sort";
+		/* set collation locale to C so the sorting behaves as strcmp()
+		 * expects for non-numeric strings */
+		setenv("LC_COLLATE", "C", 1);
 		/* sort table in-place */
-		execlp(cmd, cmd, "-o", tfile, tfile, NULL);
+		execlp(cmd, cmd, "-o", tfile,
+			"-k", "1n", "-k", "2d", "-k", "3n",
+			tfile, NULL);
 		/* shouldn't be here */
 		perror("failed to exec in child");
 		exit(1);
