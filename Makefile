@@ -4,7 +4,7 @@
 .SUFFIXES: .cpp .o
 
 CC=g++
-CFLAGS=-g -std=c++11
+CFLAGS=-g -std=c++11 -Wall
 LDFLAGS=-lcrypt
 
 SRC=rainbow.cpp hash-reduce-test.cpp rbtable.cpp build-table.cpp
