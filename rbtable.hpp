@@ -3,9 +3,6 @@
 
 #include <stddef.h>
 
-/** Maximum number of child processes to generate. */
-#define MAX_CHILD	4
-
 /** Build a rainbow table.
  * The filename for the table may be NULL; a filename will be generated.
  *
