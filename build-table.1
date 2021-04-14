@@ -1,0 +1,141 @@
+.TH build-table 1 "April 2021" "St. Cloud State University" "User Commands"
+.\"
+.SH NAME
+build-table \- build a rainbow table
+.\"
+.SH SYNOPSIS
+.B build-table
+.RB [ \-o
+.IR table_file ]
+.RB [ \-s
+.IR max_salt ]
+.RB [ \-l
+.IR chainlen ]
+.RB [ \-\- ]
+.I dict_file
+.PP
+.B build-table \-h
+.\"
+.SH DESCRIPTION
+.PP
+This command builds a rainbow table for md5crypt.
+A rainbow table hash chain is generated for each password and salt combination.
+The passwords are taken from the
+.I dict_file
+passed to the program.
+Every salt up to a defined maximum will be combined with each password for use
+in computing a hash chain.
+.SS "Password dictionary format"
+.PP
+The password dictionary file must contain passwords each separated by a single
+newline:
+.PP
+.RS
+password1
+.br
+password2
+.br
+password3
+.br
+\&...\&
+.br
+lastpass
+.RE
+.SS "Rainbow table format"
+.PP
+The rainbow table will consist of 3 strings on each line separated by a space:
+numeric salt, endpoint password, and numeric file offset.
+.PP
+The salt is the salt value used in the hash chain with the startpoint password.
+The endpoint password is the password at the end of the hash chain.
+The file offset is the byte offset from the start of the
+.I dict_file
+to the location of the startpoint password.
+.PP
+The table will be sorted by the
+.BR sort (1)
+command first on the salt in numeric-order,
+then on the endpoint password in C-locale dictionary-order,
+which is how
+.BR strcmp (3)
+compares strings.
+.PP
+An example rainbow table:
+.PP
+.RS
+.ad l
+0 endpoint1 10
+.br
+0 endpoint2 0
+.br
+0 endpoint3 20
+.br
+\&...\&
+.br
+1 asdf12 55
+.br
+1 jjj 37
+.br
+\&...\&
+.br
+2 rootroot 68
+.br
+\&...\&
+.br
+10 admin 0
+.br
+\&...\&
+.br
+.ad
+.RE
+.\"
+.SH OPTIONS
+.TP
+.BI \-h
+Print the usage text and exit.
+.TP
+.BI \-o " table_file"
+Output the rainbow table to
+.IR table_file .
+The default is to create/overwrite a file of the name "rainbow-table-%d.txt",
+where %d is the hash chain length,
+in the current working directory.
+.TP
+.BI \-s " max_salt"
+Combine up to
+.I max_salt
+different salt values with passwords for hash chains.
+The default is 4096,
+which accounts for all possible salt values for a 12-bit salt.
+.TP
+.BI \-l " chainlen"
+Use
+.IR chainlen -length
+hash chains to produce the table.
+The default is 16.
+.\"
+.SH "EXIT STATUS"
+.PP
+Exits with status 0 on an error-less exit. Exits with status 1 when an error
+occurred and prints the error to
+.BR stderr .
+.\"
+.SH NOTES
+.PP
+The md5crypt hashing technique is not properly implemented. We are waiting on
+other group-members to complete their implementation of md5crypt and are using
+a place-holder hashing technique in the meantime.
+.PP
+The place-holder hashing technique is simply the md5crypt/md5 (prefix "$1$")
+routine provided by
+.BR crypt (3),
+and only the first 16 bytes of the hash are used,
+instead of the full 22 bytes it produces.
+.\"
+.SH "SEE ALSO"
+.BR sort (1),
+.BR crypt (3),
+.BR crypt (5),
+.BR strcmp (3),
+.BR locale (5)
+.\" vim: filetype=nroff.man
