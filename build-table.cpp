@@ -39,16 +39,16 @@ int main(
 			outf = optarg;
 			break;
 		case 's': // salt
-			salt_max = atoi(optarg);
-			if (salt_max != 0) { // no error
+			salt_max = atoll(optarg);
+			if (salt_max > 0) { // no error
 				break;
 			} // error
 			printf_err("'%s' is not a valid argument for '-%c'\n",
 				optarg, ret);
 			return 1;
 		case 'l': // chain length
-			chainlen = atoi(optarg);
-			if (chainlen != 0) { // no error
+			chainlen = atoll(optarg);
+			if (chainlen > 0) { // no error
 				break;
 			} // error
 			printf_err("'%s' is not a valid argument for '-%c'\n",
