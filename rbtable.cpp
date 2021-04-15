@@ -109,8 +109,6 @@ chain_passes(
 	size_t spsz = 0;
 	/* create hash chains for each password + salt */
 	while (!is_eof(dfp)) {
-		/* get the offset of password */
-		off_t doff = ftello(dfp);
 		/* get the password */
 		size_t splen;
 		splen = getline(&spass, &spsz, dfp);
@@ -124,7 +122,7 @@ chain_passes(
 			/* get endpoint pass */
 			char *epass = hash_chain(chainlen, i, spass);
 			/* write to table file */
-			fprintf(tfp, "%zu %s %jd\n", i, epass, doff);
+			fprintf(tfp, "%zu %s %s\n", i, epass, spass);
 			/* free pass */
 			free(epass);
 		}
@@ -152,7 +150,7 @@ sort_table(const char *tfile) {
 		setenv("LC_COLLATE", "C", 1);
 		/* sort table in-place */
 		execlp(cmd, cmd, "-o", tfile,
-			"-k", "1n", "-k", "2d", "-k", "3n",
+			"-k", "1n", "-k", "2d", "-k", "3d",
 			tfile, NULL);
 		/* shouldn't be here */
 		perror("failed to exec in child");

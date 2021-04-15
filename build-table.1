@@ -44,13 +44,13 @@ lastpass
 .SS "Rainbow table format"
 .PP
 The rainbow table will consist of 3 strings on each line separated by a space:
-numeric salt, endpoint password, and numeric file offset.
+numeric salt, endpoint password, and startpoint password.
 .PP
 The salt is the salt value used in the hash chain with the startpoint password.
 The endpoint password is the password at the end of the hash chain.
-The file offset is the byte offset from the start of the
+The startpoint password is the password from the
 .I dict_file
-to the location of the startpoint password.
+which started the hash chain.
 .PP
 The table will be sorted by the
 .BR sort (1)
@@ -64,25 +64,25 @@ An example rainbow table:
 .PP
 .RS
 .ad l
-0 endpoint1 10
+0 endpoint1 password5
 .br
-0 endpoint2 0
+0 endpoint2 password2
 .br
-0 endpoint3 20
-.br
-\&...\&
-.br
-1 asdf12 55
-.br
-1 jjj 37
+0 endpoint3 abcdefgh
 .br
 \&...\&
 .br
-2 rootroot 68
+1 asdf12 1234567890
+.br
+1 jjj asdf
 .br
 \&...\&
 .br
-10 admin 0
+2 rootroot password5
+.br
+\&...\&
+.br
+10 admin password1
 .br
 \&...\&
 .br
