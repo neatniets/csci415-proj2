@@ -114,8 +114,8 @@ chain_passes(
 		/* get the password */
 		size_t splen;
 		splen = getline(&spass, &spsz, dfp);
-		if (spass[splen] == '\n') {
-			spass[splen] = '\0';
+		if (spass[splen-1] == '\n') {
+			spass[splen-1] = '\0';
 			splen--;
 		}
 
