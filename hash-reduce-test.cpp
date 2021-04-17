@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define CHAINLEN	17
+
 #include "rainbow.hpp"
 
 int
@@ -10,8 +12,8 @@ main(
 	int argc,
 	char **argv
 ) {
-	const salt_t salt = 123;
-	const char passwd[] = "gamer";
+	const salt_t salt = 0;
+	const char passwd[] = "admin";
 
 	puts("test if hashing is deterministic");
 	char *det[2];
@@ -62,7 +64,7 @@ main(
 	printf("pass = %s\n", p);
 	free_hash(h);
 	h = NULL;
-	for (uchar_t i = 1; i <= 10; i++) {
+	for (uchar_t i = 1; i < CHAINLEN; i++) {
 		h = hash(salt, p);
 		printf("hash = %s\n", h);
 		free(p);
@@ -72,7 +74,7 @@ main(
 	}
 
 	puts("\ntesting hash chain method");
-	char *p2 = hash_chain(10, salt, passwd);
+	char *p2 = hash_chain(CHAINLEN, salt, passwd);
 	printf("pass1 = %s\n"
 		"pass2 = %s\n",
 		p, p2);
