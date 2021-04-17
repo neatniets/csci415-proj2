@@ -51,7 +51,7 @@ hash_chain(
 	h = NULL;
 
 	/* produce hash chain */
-	for (int i = 1; i <= len; i++) {
+	for (int i = 1; i < len; i++) {
 		/* hash password */
 		h = hash(salt, p);
 		free(p);
