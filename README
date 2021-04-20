@@ -12,3 +12,4 @@ Dependencies: libcrypt
 
 To compile: `make`
 To build the table: `build-table [OPTIONS] dict_file`
+To use the password cracker: `crack`
