@@ -12,4 +12,5 @@ Dependencies: libcrypt
 
 To compile: `make`
 To build the table: `build-table [OPTIONS] dict_file`
+To view the user manual for `build-table`: `man -l build-table.1`
 To use the password cracker: `crack`
